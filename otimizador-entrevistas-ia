@@ -1,8 +1,0 @@
-/otimizador-entrevistas-ia/
-├── modelo_entrevista.pkl
-├── label_encoders.pkl
-├── features_utilizadas.pkl
-├── treinamento.py
-├── main.py
-├── requirements.txt
-└── README.md
