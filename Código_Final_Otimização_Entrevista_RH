@@ -1,0 +1,1501 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/alinecorreia22/Otimiza-o-de-Entrevistas-com-IA/blob/main/C%C3%B3digo_Final_Otimiza%C3%A7%C3%A3o_Entrevista_RH\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from google.colab import files\n",
+        "\n",
+        "# Execute e selecione o arquivo .json correto do seu computador\n",
+        "uploaded = files.upload()\n"
+      ],
+      "metadata": {
+        "id": "9EnpjKjLSZyT",
+        "outputId": "14e6d305-8bcc-403e-a34d-4d5726e1862b",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 145
+        }
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "<IPython.core.display.HTML object>"
+            ],
+            "text/html": [
+              "\n",
+              "     <input type=\"file\" id=\"files-414b897a-8803-4a2a-a521-2b1b02ca01fe\" name=\"files[]\" multiple disabled\n",
+              "        style=\"border:none\" />\n",
+              "     <output id=\"result-414b897a-8803-4a2a-a521-2b1b02ca01fe\">\n",
+              "      Upload widget is only available when the cell has been executed in the\n",
+              "      current browser session. Please rerun this cell to enable.\n",
+              "      </output>\n",
+              "      <script>// Copyright 2017 Google LLC\n",
+              "//\n",
+              "// Licensed under the Apache License, Version 2.0 (the \"License\");\n",
+              "// you may not use this file except in compliance with the License.\n",
+              "// You may obtain a copy of the License at\n",
+              "//\n",
+              "//      http://www.apache.org/licenses/LICENSE-2.0\n",
+              "//\n",
+              "// Unless required by applicable law or agreed to in writing, software\n",
+              "// distributed under the License is distributed on an \"AS IS\" BASIS,\n",
+              "// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n",
+              "// See the License for the specific language governing permissions and\n",
+              "// limitations under the License.\n",
+              "\n",
+              "/**\n",
+              " * @fileoverview Helpers for google.colab Python module.\n",
+              " */\n",
+              "(function(scope) {\n",
+              "function span(text, styleAttributes = {}) {\n",
+              "  const element = document.createElement('span');\n",
+              "  element.textContent = text;\n",
+              "  for (const key of Object.keys(styleAttributes)) {\n",
+              "    element.style[key] = styleAttributes[key];\n",
+              "  }\n",
+              "  return element;\n",
+              "}\n",
+              "\n",
+              "// Max number of bytes which will be uploaded at a time.\n",
+              "const MAX_PAYLOAD_SIZE = 100 * 1024;\n",
+              "\n",
+              "function _uploadFiles(inputId, outputId) {\n",
+              "  const steps = uploadFilesStep(inputId, outputId);\n",
+              "  const outputElement = document.getElementById(outputId);\n",
+              "  // Cache steps on the outputElement to make it available for the next call\n",
+              "  // to uploadFilesContinue from Python.\n",
+              "  outputElement.steps = steps;\n",
+              "\n",
+              "  return _uploadFilesContinue(outputId);\n",
+              "}\n",
+              "\n",
+              "// This is roughly an async generator (not supported in the browser yet),\n",
+              "// where there are multiple asynchronous steps and the Python side is going\n",
+              "// to poll for completion of each step.\n",
+              "// This uses a Promise to block the python side on completion of each step,\n",
+              "// then passes the result of the previous step as the input to the next step.\n",
+              "function _uploadFilesContinue(outputId) {\n",
+              "  const outputElement = document.getElementById(outputId);\n",
+              "  const steps = outputElement.steps;\n",
+              "\n",
+              "  const next = steps.next(outputElement.lastPromiseValue);\n",
+              "  return Promise.resolve(next.value.promise).then((value) => {\n",
+              "    // Cache the last promise value to make it available to the next\n",
+              "    // step of the generator.\n",
+              "    outputElement.lastPromiseValue = value;\n",
+              "    return next.value.response;\n",
+              "  });\n",
+              "}\n",
+              "\n",
+              "/**\n",
+              " * Generator function which is called between each async step of the upload\n",
+              " * process.\n",
+              " * @param {string} inputId Element ID of the input file picker element.\n",
+              " * @param {string} outputId Element ID of the output display.\n",
+              " * @return {!Iterable<!Object>} Iterable of next steps.\n",
+              " */\n",
+              "function* uploadFilesStep(inputId, outputId) {\n",
+              "  const inputElement = document.getElementById(inputId);\n",
+              "  inputElement.disabled = false;\n",
+              "\n",
+              "  const outputElement = document.getElementById(outputId);\n",
+              "  outputElement.innerHTML = '';\n",
+              "\n",
+              "  const pickedPromise = new Promise((resolve) => {\n",
+              "    inputElement.addEventListener('change', (e) => {\n",
+              "      resolve(e.target.files);\n",
+              "    });\n",
+              "  });\n",
+              "\n",
+              "  const cancel = document.createElement('button');\n",
+              "  inputElement.parentElement.appendChild(cancel);\n",
+              "  cancel.textContent = 'Cancel upload';\n",
+              "  const cancelPromise = new Promise((resolve) => {\n",
+              "    cancel.onclick = () => {\n",
+              "      resolve(null);\n",
+              "    };\n",
+              "  });\n",
+              "\n",
+              "  // Wait for the user to pick the files.\n",
+              "  const files = yield {\n",
+              "    promise: Promise.race([pickedPromise, cancelPromise]),\n",
+              "    response: {\n",
+              "      action: 'starting',\n",
+              "    }\n",
+              "  };\n",
+              "\n",
+              "  cancel.remove();\n",
+              "\n",
+              "  // Disable the input element since further picks are not allowed.\n",
+              "  inputElement.disabled = true;\n",
+              "\n",
+              "  if (!files) {\n",
+              "    return {\n",
+              "      response: {\n",
+              "        action: 'complete',\n",
+              "      }\n",
+              "    };\n",
+              "  }\n",
+              "\n",
+              "  for (const file of files) {\n",
+              "    const li = document.createElement('li');\n",
+              "    li.append(span(file.name, {fontWeight: 'bold'}));\n",
+              "    li.append(span(\n",
+              "        `(${file.type || 'n/a'}) - ${file.size} bytes, ` +\n",
+              "        `last modified: ${\n",
+              "            file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() :\n",
+              "                                    'n/a'} - `));\n",
+              "    const percent = span('0% done');\n",
+              "    li.appendChild(percent);\n",
+              "\n",
+              "    outputElement.appendChild(li);\n",
+              "\n",
+              "    const fileDataPromise = new Promise((resolve) => {\n",
+              "      const reader = new FileReader();\n",
+              "      reader.onload = (e) => {\n",
+              "        resolve(e.target.result);\n",
+              "      };\n",
+              "      reader.readAsArrayBuffer(file);\n",
+              "    });\n",
+              "    // Wait for the data to be ready.\n",
+              "    let fileData = yield {\n",
+              "      promise: fileDataPromise,\n",
+              "      response: {\n",
+              "        action: 'continue',\n",
+              "      }\n",
+              "    };\n",
+              "\n",
+              "    // Use a chunked sending to avoid message size limits. See b/62115660.\n",
+              "    let position = 0;\n",
+              "    do {\n",
+              "      const length = Math.min(fileData.byteLength - position, MAX_PAYLOAD_SIZE);\n",
+              "      const chunk = new Uint8Array(fileData, position, length);\n",
+              "      position += length;\n",
+              "\n",
+              "      const base64 = btoa(String.fromCharCode.apply(null, chunk));\n",
+              "      yield {\n",
+              "        response: {\n",
+              "          action: 'append',\n",
+              "          file: file.name,\n",
+              "          data: base64,\n",
+              "        },\n",
+              "      };\n",
+              "\n",
+              "      let percentDone = fileData.byteLength === 0 ?\n",
+              "          100 :\n",
+              "          Math.round((position / fileData.byteLength) * 100);\n",
+              "      percent.textContent = `${percentDone}% done`;\n",
+              "\n",
+              "    } while (position < fileData.byteLength);\n",
+              "  }\n",
+              "\n",
+              "  // All done.\n",
+              "  yield {\n",
+              "    response: {\n",
+              "      action: 'complete',\n",
+              "    }\n",
+              "  };\n",
+              "}\n",
+              "\n",
+              "scope.google = scope.google || {};\n",
+              "scope.google.colab = scope.google.colab || {};\n",
+              "scope.google.colab._files = {\n",
+              "  _uploadFiles,\n",
+              "  _uploadFilesContinue,\n",
+              "};\n",
+              "})(self);\n",
+              "</script> "
+            ]
+          },
+          "metadata": {}
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Saving applicants.json to applicants.json\n",
+            "Saving vagas.json to vagas.json\n",
+            "Saving prospects.json to prospects.json\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "pip install scikit-learn==1.6.1"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Jr469rHKV2jy",
+        "outputId": "d390f626-29de-46ce-9c02-cd319494468b"
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: scikit-learn==1.6.1 in /usr/local/lib/python3.11/dist-packages (1.6.1)\n",
+            "Requirement already satisfied: numpy>=1.19.5 in /usr/local/lib/python3.11/dist-packages (from scikit-learn==1.6.1) (2.0.2)\n",
+            "Requirement already satisfied: scipy>=1.6.0 in /usr/local/lib/python3.11/dist-packages (from scikit-learn==1.6.1) (1.15.3)\n",
+            "Requirement already satisfied: joblib>=1.2.0 in /usr/local/lib/python3.11/dist-packages (from scikit-learn==1.6.1) (1.5.0)\n",
+            "Requirement already satisfied: threadpoolctl>=3.1.0 in /usr/local/lib/python3.11/dist-packages (from scikit-learn==1.6.1) (3.6.0)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import pandas as pd\n",
+        "import json\n",
+        "\n",
+        "# --- ETAPA 1: Transformar 'aplicacoes.json' ---\n",
+        "with open('applicants.json', 'r', encoding='utf-8') as f:\n",
+        "    aplicacoes_raw = json.load(f)\n",
+        "\n",
+        "aplicacoes_df = pd.json_normalize(aplicacoes_raw).T.reset_index()\n",
+        "aplicacoes_df[['id_aplicacao', 'campo']] = aplicacoes_df['index'].str.extract(r\"^(\\d+)\\.(.*)\")\n",
+        "aplicacoes_df = aplicacoes_df.pivot(index='id_aplicacao', columns='campo', values=0).reset_index()\n",
+        "\n",
+        "# --- ETAPA 2: Transformar 'vagas.json' ---\n",
+        "with open('vagas.json', 'r', encoding='utf-8') as f:\n",
+        "    vagas_raw = json.load(f)\n",
+        "\n",
+        "vagas_df = pd.json_normalize(vagas_raw).T.reset_index()\n",
+        "vagas_df[['id_vaga', 'campo']] = vagas_df['index'].str.extract(r\"^(\\d+)\\.(.*)\")\n",
+        "vagas_df = vagas_df.pivot(index='id_vaga', columns='campo', values=0).reset_index()\n",
+        "\n",
+        "# --- ETAPA 3: Tentar detectar automaticamente a coluna de vínculo ---\n",
+        "possiveis_chaves_aplicacao = [col for col in aplicacoes_df.columns if 'vaga' in col.lower() or 'codigo' in col.lower()]\n",
+        "possiveis_chaves_vaga = [col for col in vagas_df.columns if 'id' in col.lower() or 'codigo' in col.lower() or 'vaga' in col.lower()]\n",
+        "\n",
+        "print(\"🔍 Possíveis chaves em 'aplicacoes':\", possiveis_chaves_aplicacao)\n",
+        "print(\"🔍 Possíveis chaves em 'vagas':\", possiveis_chaves_vaga)\n",
+        "\n",
+        "# Tentar encontrar uma chave em comum (valores coincidentes)\n",
+        "chave_encontrada = None\n",
+        "for col_ap in possiveis_chaves_aplicacao:\n",
+        "    for col_vg in possiveis_chaves_vaga:\n",
+        "        if aplicacoes_df[col_ap].isin(vagas_df[col_vg]).any():\n",
+        "            chave_encontrada = (col_ap, col_vg)\n",
+        "            break\n",
+        "    if chave_encontrada:\n",
+        "        break\n",
+        "\n",
+        "if chave_encontrada:\n",
+        "    col_ap, col_vg = chave_encontrada\n",
+        "    print(f\"\\n✅ Chave encontrada: aplicacoes['{col_ap}'] ↔ vagas['{col_vg}']\")\n",
+        "    df_final = aplicacoes_df.merge(vagas_df, how='left', left_on=col_ap, right_on=col_vg, suffixes=('', '_vaga'))\n",
+        "    print(f\"\\n🟢 Merge realizado com sucesso. Shape final: {df_final.shape}\")\n",
+        "else:\n",
+        "    print(\"\\n❌ Nenhuma chave comum encontrada para merge. Verifique os dados manualmente.\")\n"
+      ],
+      "metadata": {
+        "id": "1RMhNEm_d2uP",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "753449c6-b344-46e6-d10c-ef6f05840905"
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "🔍 Possíveis chaves em 'aplicacoes': ['infos_basicas.codigo_profissional']\n",
+            "🔍 Possíveis chaves em 'vagas': ['id_vaga', 'informacoes_basicas.objetivo_vaga', 'informacoes_basicas.origem_vaga', 'informacoes_basicas.prioridade_vaga', 'informacoes_basicas.titulo_vaga', 'informacoes_basicas.vaga_sap', 'perfil_vaga.areas_atuacao', 'perfil_vaga.bairro', 'perfil_vaga.cidade', 'perfil_vaga.competencia_tecnicas_e_comportamentais', 'perfil_vaga.demais_observacoes', 'perfil_vaga.equipamentos_necessarios', 'perfil_vaga.estado', 'perfil_vaga.faixa_etaria', 'perfil_vaga.habilidades_comportamentais_necessarias', 'perfil_vaga.horario_trabalho', 'perfil_vaga.local_trabalho', 'perfil_vaga.nivel profissional', 'perfil_vaga.nivel_academico', 'perfil_vaga.nivel_espanhol', 'perfil_vaga.nivel_ingles', 'perfil_vaga.outro_idioma', 'perfil_vaga.pais', 'perfil_vaga.principais_atividades', 'perfil_vaga.regiao', 'perfil_vaga.vaga_especifica_para_pcd', 'perfil_vaga.viagens_requeridas']\n",
+            "\n",
+            "✅ Chave encontrada: aplicacoes['infos_basicas.codigo_profissional'] ↔ vagas['id_vaga']\n",
+            "\n",
+            "🟢 Merge realizado com sucesso. Shape final: (42482, 103)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(df_final.columns.tolist())"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "631NxRPxg2HC",
+        "outputId": "2fdce9fc-4232-458f-e6dd-217ba0f8dbbc"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "['id_aplicacao', 'cargo_atual.cargo_atual', 'cargo_atual.cliente', 'cargo_atual.data_admissao', 'cargo_atual.data_ultima_promocao', 'cargo_atual.email_corporativo', 'cargo_atual.email_superior_imediato', 'cargo_atual.id_ibrati', 'cargo_atual.nome_superior_imediato', 'cargo_atual.projeto_atual', 'cargo_atual.unidade', 'cv_en', 'cv_pt', 'formacao_e_idiomas.ano_conclusao', 'formacao_e_idiomas.cursos', 'formacao_e_idiomas.instituicao_ensino_superior', 'formacao_e_idiomas.nivel_academico', 'formacao_e_idiomas.nivel_espanhol', 'formacao_e_idiomas.nivel_ingles', 'formacao_e_idiomas.outro_curso', 'formacao_e_idiomas.outro_idioma', 'informacoes_pessoais.cpf', 'informacoes_pessoais.data_aceite', 'informacoes_pessoais.data_nascimento', 'informacoes_pessoais.download_cv', 'informacoes_pessoais.email', 'informacoes_pessoais.email_secundario', 'informacoes_pessoais.endereco', 'informacoes_pessoais.estado_civil', 'informacoes_pessoais.facebook', 'informacoes_pessoais.fonte_indicacao', 'informacoes_pessoais.nome', 'informacoes_pessoais.pcd', 'informacoes_pessoais.sexo', 'informacoes_pessoais.skype', 'informacoes_pessoais.telefone_celular', 'informacoes_pessoais.telefone_recado', 'informacoes_pessoais.url_linkedin', 'informacoes_profissionais.area_atuacao', 'informacoes_profissionais.certificacoes', 'informacoes_profissionais.conhecimentos_tecnicos', 'informacoes_profissionais.experiencias', 'informacoes_profissionais.nivel_profissional', 'informacoes_profissionais.outras_certificacoes', 'informacoes_profissionais.qualificacoes', 'informacoes_profissionais.remuneracao', 'informacoes_profissionais.titulo_profissional', 'infos_basicas.codigo_profissional', 'infos_basicas.data_atualizacao', 'infos_basicas.data_criacao', 'infos_basicas.email', 'infos_basicas.inserido_por', 'infos_basicas.local', 'infos_basicas.nome', 'infos_basicas.objetivo_profissional', 'infos_basicas.sabendo_de_nos_por', 'infos_basicas.telefone', 'infos_basicas.telefone_recado', 'id_vaga', 'beneficios.valor_compra_1', 'beneficios.valor_compra_2', 'beneficios.valor_venda', 'informacoes_basicas.analista_responsavel', 'informacoes_basicas.cliente', 'informacoes_basicas.data_final', 'informacoes_basicas.data_inicial', 'informacoes_basicas.data_requicisao', 'informacoes_basicas.empresa_divisao', 'informacoes_basicas.limite_esperado_para_contratacao', 'informacoes_basicas.nome', 'informacoes_basicas.nome_substituto', 'informacoes_basicas.objetivo_vaga', 'informacoes_basicas.origem_vaga', 'informacoes_basicas.prazo_contratacao', 'informacoes_basicas.prioridade_vaga', 'informacoes_basicas.requisitante', 'informacoes_basicas.solicitante_cliente', 'informacoes_basicas.superior_imediato', 'informacoes_basicas.telefone', 'informacoes_basicas.tipo_contratacao', 'informacoes_basicas.titulo_vaga', 'informacoes_basicas.vaga_sap', 'perfil_vaga.areas_atuacao', 'perfil_vaga.bairro', 'perfil_vaga.cidade', 'perfil_vaga.competencia_tecnicas_e_comportamentais', 'perfil_vaga.demais_observacoes', 'perfil_vaga.equipamentos_necessarios', 'perfil_vaga.estado', 'perfil_vaga.faixa_etaria', 'perfil_vaga.habilidades_comportamentais_necessarias', 'perfil_vaga.horario_trabalho', 'perfil_vaga.local_trabalho', 'perfil_vaga.nivel profissional', 'perfil_vaga.nivel_academico', 'perfil_vaga.nivel_espanhol', 'perfil_vaga.nivel_ingles', 'perfil_vaga.outro_idioma', 'perfil_vaga.pais', 'perfil_vaga.principais_atividades', 'perfil_vaga.regiao', 'perfil_vaga.vaga_especifica_para_pcd', 'perfil_vaga.viagens_requeridas']\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "[col for col in df_final.columns if 'status' in col.lower()]"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "HAJPEbNihhDO",
+        "outputId": "4989aa3f-0b92-4d1c-ffee-59f9ec60e031"
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "[]"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 8
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "[col for col in df_final.columns if any(palavra in col.lower() for palavra in ['avaliacao', 'resultado', 'entrevista', 'motivo', 'decisao', 'andamento', 'final'])]"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Kp6HtrDzhp6B",
+        "outputId": "0ac853f7-0989-46d5-86aa-083211b3cff8"
+      },
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "['informacoes_basicas.data_final']"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 9
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn.ensemble import RandomForestClassifier\n",
+        "from sklearn.preprocessing import LabelEncoder\n",
+        "from sklearn.metrics import classification_report\n",
+        "import joblib\n",
+        "\n",
+        "colunas = [\n",
+        "    'formacao_e_idiomas.nivel_academico',\n",
+        "    'formacao_e_idiomas.nivel_ingles',\n",
+        "    'informacoes_profissionais.nivel_profissional',\n",
+        "    'informacoes_profissionais.remuneracao',\n",
+        "    'perfil_vaga.competencia_tecnicas_e_comportamentais',\n",
+        "    'informacoes_basicas.tipo_contratacao',\n",
+        "    'informacoes_basicas.cliente',\n",
+        "    'informacoes_basicas.data_final'\n",
+        "]\n",
+        "\n",
+        "df_modelo = df_final[colunas].copy()\n",
+        "df_modelo['target'] = df_modelo['informacoes_basicas.data_final'].notna().astype(int)\n",
+        "df_modelo = df_modelo.drop(columns=['informacoes_basicas.data_final'])\n",
+        "\n",
+        "X = df_modelo.drop('target', axis=1)\n",
+        "y = df_modelo['target']\n",
+        "\n",
+        "le_dict = {}\n",
+        "for col in X.columns:\n",
+        "    if X[col].dtype == 'object':\n",
+        "        le = LabelEncoder()\n",
+        "        X[col] = le.fit_transform(X[col].astype(str))\n",
+        "        le_dict[col] = le\n",
+        "\n",
+        "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n",
+        "\n",
+        "model = RandomForestClassifier(random_state=42)\n",
+        "model.fit(X_train, y_train)\n",
+        "\n",
+        "print(classification_report(y_test, model.predict(X_test)))"
+      ],
+      "metadata": {
+        "id": "6Hr2rU2ngENE",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "0d00b8bd-f90f-4307-8112-d482340de975"
+      },
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "              precision    recall  f1-score   support\n",
+            "\n",
+            "           0       0.98      0.98      0.98      7582\n",
+            "           1       0.81      0.79      0.80       915\n",
+            "\n",
+            "    accuracy                           0.96      8497\n",
+            "   macro avg       0.89      0.89      0.89      8497\n",
+            "weighted avg       0.96      0.96      0.96      8497\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Salvar modelo e recursos\n",
+        "joblib.dump(model, 'modelo_entrevista.pkl')\n",
+        "joblib.dump(le_dict, 'label_encoders.pkl')\n",
+        "joblib.dump(list(X.columns), 'features_utilizadas.pkl')\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "cq0HhzaPh8tp",
+        "outputId": "0ed758ee-898d-42d6-fc45-df72cfb408ba"
+      },
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "['features_utilizadas.pkl']"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 11
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install streamlit pyngrok"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ZVE2Ab4PqQIx",
+        "outputId": "82352023-4a46-4d56-d843-2df4ff2fbcaa"
+      },
+      "execution_count": 12,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Collecting streamlit\n",
+            "  Downloading streamlit-1.45.1-py3-none-any.whl.metadata (8.9 kB)\n",
+            "Requirement already satisfied: pyngrok in /usr/local/lib/python3.11/dist-packages (7.2.8)\n",
+            "Requirement already satisfied: altair<6,>=4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (5.5.0)\n",
+            "Requirement already satisfied: blinker<2,>=1.5.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (1.9.0)\n",
+            "Requirement already satisfied: cachetools<6,>=4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (5.5.2)\n",
+            "Requirement already satisfied: click<9,>=7.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (8.2.0)\n",
+            "Requirement already satisfied: numpy<3,>=1.23 in /usr/local/lib/python3.11/dist-packages (from streamlit) (2.0.2)\n",
+            "Requirement already satisfied: packaging<25,>=20 in /usr/local/lib/python3.11/dist-packages (from streamlit) (24.2)\n",
+            "Requirement already satisfied: pandas<3,>=1.4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (2.2.2)\n",
+            "Requirement already satisfied: pillow<12,>=7.1.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (11.2.1)\n",
+            "Requirement already satisfied: protobuf<7,>=3.20 in /usr/local/lib/python3.11/dist-packages (from streamlit) (5.29.4)\n",
+            "Requirement already satisfied: pyarrow>=7.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (18.1.0)\n",
+            "Requirement already satisfied: requests<3,>=2.27 in /usr/local/lib/python3.11/dist-packages (from streamlit) (2.32.3)\n",
+            "Requirement already satisfied: tenacity<10,>=8.1.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (9.1.2)\n",
+            "Requirement already satisfied: toml<2,>=0.10.1 in /usr/local/lib/python3.11/dist-packages (from streamlit) (0.10.2)\n",
+            "Requirement already satisfied: typing-extensions<5,>=4.4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (4.13.2)\n",
+            "Collecting watchdog<7,>=2.1.5 (from streamlit)\n",
+            "  Downloading watchdog-6.0.0-py3-none-manylinux2014_x86_64.whl.metadata (44 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m44.3/44.3 kB\u001b[0m \u001b[31m1.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hRequirement already satisfied: gitpython!=3.1.19,<4,>=3.0.7 in /usr/local/lib/python3.11/dist-packages (from streamlit) (3.1.44)\n",
+            "Collecting pydeck<1,>=0.8.0b4 (from streamlit)\n",
+            "  Downloading pydeck-0.9.1-py2.py3-none-any.whl.metadata (4.1 kB)\n",
+            "Requirement already satisfied: tornado<7,>=6.0.3 in /usr/local/lib/python3.11/dist-packages (from streamlit) (6.4.2)\n",
+            "Requirement already satisfied: PyYAML>=5.1 in /usr/local/lib/python3.11/dist-packages (from pyngrok) (6.0.2)\n",
+            "Requirement already satisfied: jinja2 in /usr/local/lib/python3.11/dist-packages (from altair<6,>=4.0->streamlit) (3.1.6)\n",
+            "Requirement already satisfied: jsonschema>=3.0 in /usr/local/lib/python3.11/dist-packages (from altair<6,>=4.0->streamlit) (4.23.0)\n",
+            "Requirement already satisfied: narwhals>=1.14.2 in /usr/local/lib/python3.11/dist-packages (from altair<6,>=4.0->streamlit) (1.39.0)\n",
+            "Requirement already satisfied: gitdb<5,>=4.0.1 in /usr/local/lib/python3.11/dist-packages (from gitpython!=3.1.19,<4,>=3.0.7->streamlit) (4.0.12)\n",
+            "Requirement already satisfied: python-dateutil>=2.8.2 in /usr/local/lib/python3.11/dist-packages (from pandas<3,>=1.4.0->streamlit) (2.9.0.post0)\n",
+            "Requirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.11/dist-packages (from pandas<3,>=1.4.0->streamlit) (2025.2)\n",
+            "Requirement already satisfied: tzdata>=2022.7 in /usr/local/lib/python3.11/dist-packages (from pandas<3,>=1.4.0->streamlit) (2025.2)\n",
+            "Requirement already satisfied: charset-normalizer<4,>=2 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (3.4.2)\n",
+            "Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (3.10)\n",
+            "Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (2.4.0)\n",
+            "Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (2025.4.26)\n",
+            "Requirement already satisfied: smmap<6,>=3.0.1 in /usr/local/lib/python3.11/dist-packages (from gitdb<5,>=4.0.1->gitpython!=3.1.19,<4,>=3.0.7->streamlit) (5.0.2)\n",
+            "Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.11/dist-packages (from jinja2->altair<6,>=4.0->streamlit) (3.0.2)\n",
+            "Requirement already satisfied: attrs>=22.2.0 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (25.3.0)\n",
+            "Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (2025.4.1)\n",
+            "Requirement already satisfied: referencing>=0.28.4 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.36.2)\n",
+            "Requirement already satisfied: rpds-py>=0.7.1 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.24.0)\n",
+            "Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.11/dist-packages (from python-dateutil>=2.8.2->pandas<3,>=1.4.0->streamlit) (1.17.0)\n",
+            "Downloading streamlit-1.45.1-py3-none-any.whl (9.9 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m9.9/9.9 MB\u001b[0m \u001b[31m59.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading pydeck-0.9.1-py2.py3-none-any.whl (6.9 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m6.9/6.9 MB\u001b[0m \u001b[31m84.0 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading watchdog-6.0.0-py3-none-manylinux2014_x86_64.whl (79 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m79.1/79.1 kB\u001b[0m \u001b[31m6.3 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hInstalling collected packages: watchdog, pydeck, streamlit\n",
+            "Successfully installed pydeck-0.9.1 streamlit-1.45.1 watchdog-6.0.0\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import joblib\n",
+        "\n",
+        "model = joblib.load(\"modelo_entrevista.pkl\")\n",
+        "le_dict = joblib.load(\"label_encoders.pkl\")\n",
+        "features = joblib.load(\"features_utilizadas.pkl\")"
+      ],
+      "metadata": {
+        "id": "TOj6Jms9G_PP"
+      },
+      "execution_count": 13,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install fastapi nest-asyncio pyngrok uvicorn"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "oFl2055_d3q3",
+        "outputId": "f3cde931-b25d-4cc5-b30c-6d1efbcfbf8c"
+      },
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: fastapi in /usr/local/lib/python3.11/dist-packages (0.115.12)\n",
+            "Requirement already satisfied: nest-asyncio in /usr/local/lib/python3.11/dist-packages (1.6.0)\n",
+            "Requirement already satisfied: pyngrok in /usr/local/lib/python3.11/dist-packages (7.2.8)\n",
+            "Requirement already satisfied: uvicorn in /usr/local/lib/python3.11/dist-packages (0.34.2)\n",
+            "Requirement already satisfied: starlette<0.47.0,>=0.40.0 in /usr/local/lib/python3.11/dist-packages (from fastapi) (0.46.2)\n",
+            "Requirement already satisfied: pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4 in /usr/local/lib/python3.11/dist-packages (from fastapi) (2.11.4)\n",
+            "Requirement already satisfied: typing-extensions>=4.8.0 in /usr/local/lib/python3.11/dist-packages (from fastapi) (4.13.2)\n",
+            "Requirement already satisfied: PyYAML>=5.1 in /usr/local/lib/python3.11/dist-packages (from pyngrok) (6.0.2)\n",
+            "Requirement already satisfied: click>=7.0 in /usr/local/lib/python3.11/dist-packages (from uvicorn) (8.2.0)\n",
+            "Requirement already satisfied: h11>=0.8 in /usr/local/lib/python3.11/dist-packages (from uvicorn) (0.16.0)\n",
+            "Requirement already satisfied: annotated-types>=0.6.0 in /usr/local/lib/python3.11/dist-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi) (0.7.0)\n",
+            "Requirement already satisfied: pydantic-core==2.33.2 in /usr/local/lib/python3.11/dist-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi) (2.33.2)\n",
+            "Requirement already satisfied: typing-inspection>=0.4.0 in /usr/local/lib/python3.11/dist-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi) (0.4.0)\n",
+            "Requirement already satisfied: anyio<5,>=3.6.2 in /usr/local/lib/python3.11/dist-packages (from starlette<0.47.0,>=0.40.0->fastapi) (4.9.0)\n",
+            "Requirement already satisfied: idna>=2.8 in /usr/local/lib/python3.11/dist-packages (from anyio<5,>=3.6.2->starlette<0.47.0,>=0.40.0->fastapi) (3.10)\n",
+            "Requirement already satisfied: sniffio>=1.1 in /usr/local/lib/python3.11/dist-packages (from anyio<5,>=3.6.2->starlette<0.47.0,>=0.40.0->fastapi) (1.3.1)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!ngrok config add-authtoken 2wpbIEbIm27HLtF6TFXUsCLDYrz_7BjGFnHfZ3Jr2iqaHsRpL"
+      ],
+      "metadata": {
+        "id": "xvx3tObyC_SW",
+        "outputId": "985d415b-fbbd-4f6d-ae1b-0bc3beae8456",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 16,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Authtoken saved to configuration file: /root/.config/ngrok/ngrok.yml\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from fastapi import FastAPI, Request\n",
+        "from pydantic import BaseModel\n",
+        "import nest_asyncio\n",
+        "from pyngrok import ngrok\n",
+        "import uvicorn\n",
+        "import logging\n",
+        "\n",
+        "nest_asyncio.apply()\n",
+        "\n",
+        "model = joblib.load(\"modelo_entrevista.pkl\")\n",
+        "le_dict = joblib.load(\"label_encoders.pkl\")\n",
+        "features = joblib.load(\"features_utilizadas.pkl\")\n",
+        "\n",
+        "logging.basicConfig(filename=\"logs_entrevistas.log\", level=logging.INFO, format=\"%(asctime)s - %(message)s\")\n",
+        "\n",
+        "app = FastAPI(title=\"API Otimizacao de Entrevistas com IA\")\n",
+        "\n",
+        "@app.get(\"/\")\n",
+        "def root():\n",
+        "    return {\"mensagem\": \"API de Otimização de Entrevistas está no ar!\"}\n",
+        "\n",
+        "class Candidato(BaseModel):\n",
+        "    formacao_e_idiomas_nivel_academico: str\n",
+        "    formacao_e_idiomas_nivel_ingles: str\n",
+        "    informacoes_profissionais_nivel_profissional: str\n",
+        "    informacoes_profissionais_remuneracao: float\n",
+        "    perfil_vaga_competencia_tecnicas_e_comportamentais: str\n",
+        "    informacoes_basicas_tipo_contratacao: str\n",
+        "    informacoes_basicas_cliente: str\n",
+        "\n",
+        "@app.post(\"/prever/\")\n",
+        "def prever_conclusao(candidato: Candidato, request: Request):\n",
+        "    dados = pd.DataFrame([candidato.dict()])\n",
+        "    dados.columns = features\n",
+        "\n",
+        "    for col in dados.columns:\n",
+        "        if col in le_dict:\n",
+        "            dados[col] = le_dict[col].transform(dados[col].astype(str))\n",
+        "\n",
+        "    pred = model.predict(dados)[0]\n",
+        "    prob = model.predict_proba(dados)[0][pred]\n",
+        "\n",
+        "    resultado = {\n",
+        "        \"previsao\": int(pred),\n",
+        "        \"probabilidade\": round(prob, 2),\n",
+        "        \"mensagem\": \"Entrevista provável de ser concluída\" if pred == 1 else \"Entrevista não deve ser concluída\"\n",
+        "    }\n",
+        "\n",
+        "    logging.info(f\"IP: {request.client.host} | Entrada: {candidato.dict()} | Resultado: {resultado}\")\n",
+        "    return resultado\n",
+        "\n",
+        "public_url = ngrok.connect(8000)\n",
+        "print(\"🔗 URL pública:\", public_url)\n",
+        "print(\"📘 Documentação Swagger:\", f\"{public_url}/docs\")\n",
+        "\n",
+        "uvicorn.run(app, port=8000)"
+      ],
+      "metadata": {
+        "id": "MP8dERSWHK0F",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "1f32266b-59ef-4cf0-ce07-a9987d4d08b3"
+      },
+      "execution_count": 32,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "ERROR:asyncio:Task exception was never retrieved\n",
+            "future: <Task finished name='Task-15' coro=<Server.serve() done, defined at /usr/local/lib/python3.11/dist-packages/uvicorn/server.py:68> exception=KeyboardInterrupt()>\n",
+            "Traceback (most recent call last):\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/uvicorn/main.py\", line 580, in run\n",
+            "    server.run()\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/uvicorn/server.py\", line 66, in run\n",
+            "    return asyncio.run(self.serve(sockets=sockets))\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/nest_asyncio.py\", line 30, in run\n",
+            "    return loop.run_until_complete(task)\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/nest_asyncio.py\", line 92, in run_until_complete\n",
+            "    self._run_once()\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/nest_asyncio.py\", line 133, in _run_once\n",
+            "    handle._run()\n",
+            "  File \"/usr/lib/python3.11/asyncio/events.py\", line 84, in _run\n",
+            "    self._context.run(self._callback, *self._args)\n",
+            "  File \"/usr/lib/python3.11/asyncio/tasks.py\", line 360, in __wakeup\n",
+            "    self.__step()\n",
+            "  File \"/usr/lib/python3.11/asyncio/tasks.py\", line 277, in __step\n",
+            "    result = coro.send(None)\n",
+            "             ^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/uvicorn/server.py\", line 69, in serve\n",
+            "    with self.capture_signals():\n",
+            "  File \"/usr/lib/python3.11/contextlib.py\", line 144, in __exit__\n",
+            "    next(self.gen)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/uvicorn/server.py\", line 330, in capture_signals\n",
+            "    signal.raise_signal(captured_signal)\n",
+            "KeyboardInterrupt\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "🔗 URL pública: NgrokTunnel: \"https://fb8c-35-196-131-123.ngrok-free.app\" -> \"http://localhost:8000\"\n",
+            "📘 Documentação Swagger: NgrokTunnel: \"https://fb8c-35-196-131-123.ngrok-free.app\" -> \"http://localhost:8000\"/docs\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "INFO:     Started server process [3303]\n",
+            "INFO:     Waiting for application startup.\n",
+            "INFO:     Application startup complete.\n",
+            "INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "INFO:     177.27.247.165:0 - \"GET /docs HTTP/1.1\" 200 OK\n",
+            "INFO:     177.27.247.165:0 - \"GET /openapi.json HTTP/1.1\" 200 OK\n",
+            "INFO:     177.27.247.165:0 - \"POST /prever/ HTTP/1.1\" 500 Internal Server Error\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "<ipython-input-32-b91688139547>:33: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/\n",
+            "  dados = pd.DataFrame([candidato.dict()])\n",
+            "ERROR:    Exception in ASGI application\n",
+            "Traceback (most recent call last):\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/utils/_encode.py\", line 235, in _encode\n",
+            "    return _map_to_integer(values, uniques)\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/utils/_encode.py\", line 174, in _map_to_integer\n",
+            "    return xp.asarray([table[v] for v in values], device=device(values))\n",
+            "                      ^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/utils/_encode.py\", line 174, in <listcomp>\n",
+            "    return xp.asarray([table[v] for v in values], device=device(values))\n",
+            "                       ~~~~~^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/utils/_encode.py\", line 167, in __missing__\n",
+            "    raise KeyError(key)\n",
+            "KeyError: 'Superior Completo'\n",
+            "\n",
+            "During handling of the above exception, another exception occurred:\n",
+            "\n",
+            "Traceback (most recent call last):\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/uvicorn/protocols/http/h11_impl.py\", line 403, in run_asgi\n",
+            "    result = await app(  # type: ignore[func-returns-value]\n",
+            "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/uvicorn/middleware/proxy_headers.py\", line 60, in __call__\n",
+            "    return await self.app(scope, receive, send)\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/fastapi/applications.py\", line 1054, in __call__\n",
+            "    await super().__call__(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/applications.py\", line 112, in __call__\n",
+            "    await self.middleware_stack(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/middleware/errors.py\", line 187, in __call__\n",
+            "    raise exc\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/middleware/errors.py\", line 165, in __call__\n",
+            "    await self.app(scope, receive, _send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/middleware/exceptions.py\", line 62, in __call__\n",
+            "    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/_exception_handler.py\", line 53, in wrapped_app\n",
+            "    raise exc\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/_exception_handler.py\", line 42, in wrapped_app\n",
+            "    await app(scope, receive, sender)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/routing.py\", line 714, in __call__\n",
+            "    await self.middleware_stack(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/routing.py\", line 734, in app\n",
+            "    await route.handle(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/routing.py\", line 288, in handle\n",
+            "    await self.app(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/routing.py\", line 76, in app\n",
+            "    await wrap_app_handling_exceptions(app, request)(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/_exception_handler.py\", line 53, in wrapped_app\n",
+            "    raise exc\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/_exception_handler.py\", line 42, in wrapped_app\n",
+            "    await app(scope, receive, sender)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/routing.py\", line 73, in app\n",
+            "    response = await f(request)\n",
+            "               ^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/fastapi/routing.py\", line 301, in app\n",
+            "    raw_response = await run_endpoint_function(\n",
+            "                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/fastapi/routing.py\", line 214, in run_endpoint_function\n",
+            "    return await run_in_threadpool(dependant.call, **values)\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/concurrency.py\", line 37, in run_in_threadpool\n",
+            "    return await anyio.to_thread.run_sync(func)\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/anyio/to_thread.py\", line 56, in run_sync\n",
+            "    return await get_async_backend().run_sync_in_worker_thread(\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/anyio/_backends/_asyncio.py\", line 2470, in run_sync_in_worker_thread\n",
+            "    return await future\n",
+            "           ^^^^^^^^^^^^\n",
+            "  File \"/usr/lib/python3.11/asyncio/futures.py\", line 287, in __await__\n",
+            "    yield self  # This tells Task to wait for completion.\n",
+            "    ^^^^^^^^^^\n",
+            "  File \"/usr/lib/python3.11/asyncio/tasks.py\", line 349, in __wakeup\n",
+            "    future.result()\n",
+            "  File \"/usr/lib/python3.11/asyncio/futures.py\", line 203, in result\n",
+            "    raise self._exception.with_traceback(self._exception_tb)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/anyio/_backends/_asyncio.py\", line 967, in run\n",
+            "    result = context.run(func, *args)\n",
+            "             ^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"<ipython-input-32-b91688139547>\", line 38, in prever_conclusao\n",
+            "    dados[col] = le_dict[col].transform(dados[col].astype(str))\n",
+            "                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/preprocessing/_label.py\", line 134, in transform\n",
+            "    return _encode(y, uniques=self.classes_)\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/utils/_encode.py\", line 237, in _encode\n",
+            "    raise ValueError(f\"y contains previously unseen labels: {str(e)}\")\n",
+            "ValueError: y contains previously unseen labels: 'Superior Completo'\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "INFO:     177.27.247.165:0 - \"POST /prever/ HTTP/1.1\" 500 Internal Server Error\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "<ipython-input-32-b91688139547>:33: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.11/migration/\n",
+            "  dados = pd.DataFrame([candidato.dict()])\n",
+            "ERROR:    Exception in ASGI application\n",
+            "Traceback (most recent call last):\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/utils/_encode.py\", line 235, in _encode\n",
+            "    return _map_to_integer(values, uniques)\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/utils/_encode.py\", line 174, in _map_to_integer\n",
+            "    return xp.asarray([table[v] for v in values], device=device(values))\n",
+            "                      ^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/utils/_encode.py\", line 174, in <listcomp>\n",
+            "    return xp.asarray([table[v] for v in values], device=device(values))\n",
+            "                       ~~~~~^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/utils/_encode.py\", line 167, in __missing__\n",
+            "    raise KeyError(key)\n",
+            "KeyError: 'Superior Completo'\n",
+            "\n",
+            "During handling of the above exception, another exception occurred:\n",
+            "\n",
+            "Traceback (most recent call last):\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/uvicorn/protocols/http/h11_impl.py\", line 403, in run_asgi\n",
+            "    result = await app(  # type: ignore[func-returns-value]\n",
+            "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/uvicorn/middleware/proxy_headers.py\", line 60, in __call__\n",
+            "    return await self.app(scope, receive, send)\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/fastapi/applications.py\", line 1054, in __call__\n",
+            "    await super().__call__(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/applications.py\", line 112, in __call__\n",
+            "    await self.middleware_stack(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/middleware/errors.py\", line 187, in __call__\n",
+            "    raise exc\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/middleware/errors.py\", line 165, in __call__\n",
+            "    await self.app(scope, receive, _send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/middleware/exceptions.py\", line 62, in __call__\n",
+            "    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/_exception_handler.py\", line 53, in wrapped_app\n",
+            "    raise exc\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/_exception_handler.py\", line 42, in wrapped_app\n",
+            "    await app(scope, receive, sender)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/routing.py\", line 714, in __call__\n",
+            "    await self.middleware_stack(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/routing.py\", line 734, in app\n",
+            "    await route.handle(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/routing.py\", line 288, in handle\n",
+            "    await self.app(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/routing.py\", line 76, in app\n",
+            "    await wrap_app_handling_exceptions(app, request)(scope, receive, send)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/_exception_handler.py\", line 53, in wrapped_app\n",
+            "    raise exc\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/_exception_handler.py\", line 42, in wrapped_app\n",
+            "    await app(scope, receive, sender)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/routing.py\", line 73, in app\n",
+            "    response = await f(request)\n",
+            "               ^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/fastapi/routing.py\", line 301, in app\n",
+            "    raw_response = await run_endpoint_function(\n",
+            "                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/fastapi/routing.py\", line 214, in run_endpoint_function\n",
+            "    return await run_in_threadpool(dependant.call, **values)\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/starlette/concurrency.py\", line 37, in run_in_threadpool\n",
+            "    return await anyio.to_thread.run_sync(func)\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/anyio/to_thread.py\", line 56, in run_sync\n",
+            "    return await get_async_backend().run_sync_in_worker_thread(\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/anyio/_backends/_asyncio.py\", line 2470, in run_sync_in_worker_thread\n",
+            "    return await future\n",
+            "           ^^^^^^^^^^^^\n",
+            "  File \"/usr/lib/python3.11/asyncio/futures.py\", line 287, in __await__\n",
+            "    yield self  # This tells Task to wait for completion.\n",
+            "    ^^^^^^^^^^\n",
+            "  File \"/usr/lib/python3.11/asyncio/tasks.py\", line 349, in __wakeup\n",
+            "    future.result()\n",
+            "  File \"/usr/lib/python3.11/asyncio/futures.py\", line 203, in result\n",
+            "    raise self._exception.with_traceback(self._exception_tb)\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/anyio/_backends/_asyncio.py\", line 967, in run\n",
+            "    result = context.run(func, *args)\n",
+            "             ^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"<ipython-input-32-b91688139547>\", line 38, in prever_conclusao\n",
+            "    dados[col] = le_dict[col].transform(dados[col].astype(str))\n",
+            "                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/preprocessing/_label.py\", line 134, in transform\n",
+            "    return _encode(y, uniques=self.classes_)\n",
+            "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n",
+            "  File \"/usr/local/lib/python3.11/dist-packages/sklearn/utils/_encode.py\", line 237, in _encode\n",
+            "    raise ValueError(f\"y contains previously unseen labels: {str(e)}\")\n",
+            "ValueError: y contains previously unseen labels: 'Superior Completo'\n",
+            "INFO:     Shutting down\n",
+            "INFO:     Waiting for application shutdown.\n",
+            "INFO:     Application shutdown complete.\n",
+            "INFO:     Finished server process [3303]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install fastapi uvicorn nest_asyncio pyngrok"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "kdT876H6e-QP",
+        "outputId": "67447633-4009-427c-8185-81c4bb7a73b7"
+      },
+      "execution_count": 20,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: fastapi in /usr/local/lib/python3.11/dist-packages (0.115.12)\n",
+            "Requirement already satisfied: uvicorn in /usr/local/lib/python3.11/dist-packages (0.34.2)\n",
+            "Requirement already satisfied: nest_asyncio in /usr/local/lib/python3.11/dist-packages (1.6.0)\n",
+            "Requirement already satisfied: pyngrok in /usr/local/lib/python3.11/dist-packages (7.2.8)\n",
+            "Requirement already satisfied: starlette<0.47.0,>=0.40.0 in /usr/local/lib/python3.11/dist-packages (from fastapi) (0.46.2)\n",
+            "Requirement already satisfied: pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4 in /usr/local/lib/python3.11/dist-packages (from fastapi) (2.11.4)\n",
+            "Requirement already satisfied: typing-extensions>=4.8.0 in /usr/local/lib/python3.11/dist-packages (from fastapi) (4.13.2)\n",
+            "Requirement already satisfied: click>=7.0 in /usr/local/lib/python3.11/dist-packages (from uvicorn) (8.2.0)\n",
+            "Requirement already satisfied: h11>=0.8 in /usr/local/lib/python3.11/dist-packages (from uvicorn) (0.16.0)\n",
+            "Requirement already satisfied: PyYAML>=5.1 in /usr/local/lib/python3.11/dist-packages (from pyngrok) (6.0.2)\n",
+            "Requirement already satisfied: annotated-types>=0.6.0 in /usr/local/lib/python3.11/dist-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi) (0.7.0)\n",
+            "Requirement already satisfied: pydantic-core==2.33.2 in /usr/local/lib/python3.11/dist-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi) (2.33.2)\n",
+            "Requirement already satisfied: typing-inspection>=0.4.0 in /usr/local/lib/python3.11/dist-packages (from pydantic!=1.8,!=1.8.1,!=2.0.0,!=2.0.1,!=2.1.0,<3.0.0,>=1.7.4->fastapi) (0.4.0)\n",
+            "Requirement already satisfied: anyio<5,>=3.6.2 in /usr/local/lib/python3.11/dist-packages (from starlette<0.47.0,>=0.40.0->fastapi) (4.9.0)\n",
+            "Requirement already satisfied: idna>=2.8 in /usr/local/lib/python3.11/dist-packages (from anyio<5,>=3.6.2->starlette<0.47.0,>=0.40.0->fastapi) (3.10)\n",
+            "Requirement already satisfied: sniffio>=1.1 in /usr/local/lib/python3.11/dist-packages (from anyio<5,>=3.6.2->starlette<0.47.0,>=0.40.0->fastapi) (1.3.1)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install streamlit\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "FKv_cuirovpi",
+        "outputId": "a2429977-a359-423a-9ee3-783c7ec47dd6"
+      },
+      "execution_count": 21,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: streamlit in /usr/local/lib/python3.11/dist-packages (1.45.1)\n",
+            "Requirement already satisfied: altair<6,>=4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (5.5.0)\n",
+            "Requirement already satisfied: blinker<2,>=1.5.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (1.9.0)\n",
+            "Requirement already satisfied: cachetools<6,>=4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (5.5.2)\n",
+            "Requirement already satisfied: click<9,>=7.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (8.2.0)\n",
+            "Requirement already satisfied: numpy<3,>=1.23 in /usr/local/lib/python3.11/dist-packages (from streamlit) (2.0.2)\n",
+            "Requirement already satisfied: packaging<25,>=20 in /usr/local/lib/python3.11/dist-packages (from streamlit) (24.2)\n",
+            "Requirement already satisfied: pandas<3,>=1.4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (2.2.2)\n",
+            "Requirement already satisfied: pillow<12,>=7.1.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (11.2.1)\n",
+            "Requirement already satisfied: protobuf<7,>=3.20 in /usr/local/lib/python3.11/dist-packages (from streamlit) (5.29.4)\n",
+            "Requirement already satisfied: pyarrow>=7.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (18.1.0)\n",
+            "Requirement already satisfied: requests<3,>=2.27 in /usr/local/lib/python3.11/dist-packages (from streamlit) (2.32.3)\n",
+            "Requirement already satisfied: tenacity<10,>=8.1.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (9.1.2)\n",
+            "Requirement already satisfied: toml<2,>=0.10.1 in /usr/local/lib/python3.11/dist-packages (from streamlit) (0.10.2)\n",
+            "Requirement already satisfied: typing-extensions<5,>=4.4.0 in /usr/local/lib/python3.11/dist-packages (from streamlit) (4.13.2)\n",
+            "Requirement already satisfied: watchdog<7,>=2.1.5 in /usr/local/lib/python3.11/dist-packages (from streamlit) (6.0.0)\n",
+            "Requirement already satisfied: gitpython!=3.1.19,<4,>=3.0.7 in /usr/local/lib/python3.11/dist-packages (from streamlit) (3.1.44)\n",
+            "Requirement already satisfied: pydeck<1,>=0.8.0b4 in /usr/local/lib/python3.11/dist-packages (from streamlit) (0.9.1)\n",
+            "Requirement already satisfied: tornado<7,>=6.0.3 in /usr/local/lib/python3.11/dist-packages (from streamlit) (6.4.2)\n",
+            "Requirement already satisfied: jinja2 in /usr/local/lib/python3.11/dist-packages (from altair<6,>=4.0->streamlit) (3.1.6)\n",
+            "Requirement already satisfied: jsonschema>=3.0 in /usr/local/lib/python3.11/dist-packages (from altair<6,>=4.0->streamlit) (4.23.0)\n",
+            "Requirement already satisfied: narwhals>=1.14.2 in /usr/local/lib/python3.11/dist-packages (from altair<6,>=4.0->streamlit) (1.39.0)\n",
+            "Requirement already satisfied: gitdb<5,>=4.0.1 in /usr/local/lib/python3.11/dist-packages (from gitpython!=3.1.19,<4,>=3.0.7->streamlit) (4.0.12)\n",
+            "Requirement already satisfied: python-dateutil>=2.8.2 in /usr/local/lib/python3.11/dist-packages (from pandas<3,>=1.4.0->streamlit) (2.9.0.post0)\n",
+            "Requirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.11/dist-packages (from pandas<3,>=1.4.0->streamlit) (2025.2)\n",
+            "Requirement already satisfied: tzdata>=2022.7 in /usr/local/lib/python3.11/dist-packages (from pandas<3,>=1.4.0->streamlit) (2025.2)\n",
+            "Requirement already satisfied: charset-normalizer<4,>=2 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (3.4.2)\n",
+            "Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (3.10)\n",
+            "Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (2.4.0)\n",
+            "Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2.27->streamlit) (2025.4.26)\n",
+            "Requirement already satisfied: smmap<6,>=3.0.1 in /usr/local/lib/python3.11/dist-packages (from gitdb<5,>=4.0.1->gitpython!=3.1.19,<4,>=3.0.7->streamlit) (5.0.2)\n",
+            "Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.11/dist-packages (from jinja2->altair<6,>=4.0->streamlit) (3.0.2)\n",
+            "Requirement already satisfied: attrs>=22.2.0 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (25.3.0)\n",
+            "Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (2025.4.1)\n",
+            "Requirement already satisfied: referencing>=0.28.4 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.36.2)\n",
+            "Requirement already satisfied: rpds-py>=0.7.1 in /usr/local/lib/python3.11/dist-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.24.0)\n",
+            "Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.11/dist-packages (from python-dateutil>=2.8.2->pandas<3,>=1.4.0->streamlit) (1.17.0)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import streamlit as st\n",
+        "import re\n",
+        "import json\n",
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "st.set_page_config(page_title=\"Painel IA de Entrevistas\", layout=\"wide\")\n",
+        "st.title(\"📊 Painel de Monitoramento - IA Otimização de Entrevistas\")\n",
+        "\n",
+        "LOG_FILE = \"logs_entrevistas.log\"\n",
+        "\n",
+        "def parse_log(file_path):\n",
+        "    entradas = []\n",
+        "    if not os.path.exists(file_path):\n",
+        "        return pd.DataFrame()\n",
+        "    with open(file_path, \"r\") as f:\n",
+        "        for linha in f:\n",
+        "            try:\n",
+        "                match = re.search(r\"IP: (.*?) \\| Entrada: (.*?) \\| Resultado: (.*)\", linha)\n",
+        "                if match:\n",
+        "                    ip = match.group(1)\n",
+        "                    entrada = json.loads(match.group(2).replace(\"'\", '\"'))\n",
+        "                    resultado = json.loads(match.group(3).replace(\"'\", '\"'))\n",
+        "                    entrada.update(resultado)\n",
+        "                    entrada[\"Data\"] = linha[:19]\n",
+        "                    entradas.append(entrada)\n",
+        "            except Exception as e:\n",
+        "                print(f\"Erro ao processar linha: {e}\")\n",
+        "    return pd.DataFrame(entradas)\n",
+        "\n",
+        "df = parse_log(LOG_FILE)\n",
+        "if df.empty:\n",
+        "    st.warning(\"Nenhum log encontrado.\")\n",
+        "else:\n",
+        "    col1, col2 = st.columns(2)\n",
+        "    with col1:\n",
+        "        filtro_pred = st.selectbox(\"🔍 Filtrar por previsão\", options=[\"Todos\", \"Concluída\", \"Não concluída\"])\n",
+        "        if filtro_pred != \"Todos\":\n",
+        "            df = df[df[\"previsao\"] == (1 if filtro_pred == \"Concluída\" else 0)]\n",
+        "    with col2:\n",
+        "        qtd = st.slider(\"🔢 Quantidade de registros exibidos\", min_value=5, max_value=100, value=20)\n",
+        "\n",
+        "    st.markdown(\"### 📄 Registros Recentes\")\n",
+        "    st.dataframe(df.sort_values(\"timestamp\", ascending=False).head(qtd), use_container_width=True)\n",
+        "\n",
+        "    st.markdown(\"---\")\n",
+        "    st.markdown(\"### 📊 Distribuição das Previsões\")\n",
+        "    contagem = df[\"previsao\"].value_counts().sort_index()\n",
+        "    labels = [\"Não Concluída\", \"Concluída\"]\n",
+        "    valores = [contagem.get(0, 0), contagem.get(1, 0)]\n",
+        "\n",
+        "    fig, ax = plt.subplots()\n",
+        "    ax.bar(labels, valores)\n",
+        "    ax.set_ylabel(\"Quantidade\")\n",
+        "    ax.set_title(\"Previsões Registradas\")\n",
+        "    st.pyplot(fig)\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "FvZjqHrxlv5G",
+        "outputId": "b8b7f777-81d0-4d4b-f18e-3f8c07268f7f"
+      },
+      "execution_count": 76,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "2025-05-21 19:07:19.695 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-05-21 19:07:19.697 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-05-21 19:07:19.698 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-05-21 19:07:19.701 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-05-21 19:07:19.702 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "log_linhas = [\n",
+        "    \"2025-05-21 10:01:00 - IP: 127.0.0.1 | Entrada: {'formacao_e_idiomas_nivel_academico': 'Médio Completo', 'formacao_e_idiomas_nivel_ingles': 'Básico', 'informacoes_profissionais_nivel_profissional': 'Júnior', 'informacoes_profissionais_remuneracao': 2500.0, 'perfil_vaga_competencia_tecnicas_e_comportamentais': 'Atendimento, CRM', 'informacoes_basicas_tipo_contratacao': 'CLT', 'informacoes_basicas_cliente': 'Empresa A'} | Resultado: {'previsao': 0, 'probabilidade': 0.45, 'mensagem': 'Entrevista não deve ser concluída'}\",\n",
+        "    \"2025-05-21 10:15:23 - IP: 127.0.0.1 | Entrada: {'formacao_e_idiomas_nivel_academico': 'Superior Incompleto', 'formacao_e_idiomas_nivel_ingles': 'Intermediário', 'informacoes_profissionais_nivel_profissional': 'Pleno', 'informacoes_profissionais_remuneracao': 3200.0, 'perfil_vaga_competencia_tecnicas_e_comportamentais': 'Excel, Análise de Dados', 'informacoes_basicas_tipo_contratacao': 'PJ', 'informacoes_basicas_cliente': 'Empresa B'} | Resultado: {'previsao': 1, 'probabilidade': 0.76, 'mensagem': 'Entrevista provável de ser concluída'}\",\n",
+        "    \"2025-05-21 11:40:15 - IP: 127.0.0.1 | Entrada: {'formacao_e_idiomas_nivel_academico': 'Superior Completo', 'formacao_e_idiomas_nivel_ingles': 'Avançado', 'informacoes_profissionais_nivel_profissional': 'Sênior', 'informacoes_profissionais_remuneracao': 6000.0, 'perfil_vaga_competencia_tecnicas_e_comportamentais': 'Liderança, Python', 'informacoes_basicas_tipo_contratacao': 'CLT', 'informacoes_basicas_cliente': 'Empresa C'} | Resultado: {'previsao': 1, 'probabilidade': 0.91, 'mensagem': 'Entrevista provável de ser concluída'}\",\n",
+        "    \"2025-05-21 12:05:42 - IP: 127.0.0.1 | Entrada: {'formacao_e_idiomas_nivel_academico': 'Técnico', 'formacao_e_idiomas_nivel_ingles': 'Nenhum', 'informacoes_profissionais_nivel_profissional': 'Auxiliar', 'informacoes_profissionais_remuneracao': 1800.0, 'perfil_vaga_competencia_tecnicas_e_comportamentais': 'Manutenção', 'informacoes_basicas_tipo_contratacao': 'CLT', 'informacoes_basicas_cliente': 'Empresa D'} | Resultado: {'previsao': 0, 'probabilidade': 0.38, 'mensagem': 'Entrevista não deve ser concluída'}\",\n",
+        "    \"2025-05-21 13:20:00 - IP: 127.0.0.1 | Entrada: {'formacao_e_idiomas_nivel_academico': 'Pós-graduação', 'formacao_e_idiomas_nivel_ingles': 'Fluente', 'informacoes_profissionais_nivel_profissional': 'Especialista', 'informacoes_profissionais_remuneracao': 8500.0, 'perfil_vaga_competencia_tecnicas_e_comportamentais': 'Gestão, Estratégia', 'informacoes_basicas_tipo_contratacao': 'PJ', 'informacoes_basicas_cliente': 'Empresa E'} | Resultado: {'previsao': 1, 'probabilidade': 0.95, 'mensagem': 'Entrevista provável de ser concluída'}\",\n",
+        "]\n",
+        "log_linhas = [\n",
+        "    \"2025-05-21 10:01:00 - IP: 127.0.0.1 | Entrada: {'formacao_e_idiomas_nivel_academico': 'Médio Completo', 'formacao_e_idiomas_nivel_ingles': 'Básico', 'informacoes_profissionais_nivel_profissional': 'Júnior', 'informacoes_profissionais_remuneracao': 2500.0, 'perfil_vaga_competencia_tecnicas_e_comportamentais': 'Atendimento, CRM', 'informacoes_basicas_tipo_contratacao': 'CLT', 'informacoes_basicas_cliente': 'Empresa A'} | Resultado: {'previsao': 0, 'probabilidade': 0.45, 'mensagem': 'Entrevista não deve ser concluída'}\",\n",
+        "    \"2025-05-21 10:15:23 - IP: 127.0.0.1 | Entrada: {'formacao_e_idiomas_nivel_academico': 'Superior Incompleto', 'formacao_e_idiomas_nivel_ingles': 'Intermediário', 'informacoes_profissionais_nivel_profissional': 'Pleno', 'informacoes_profissionais_remuneracao': 3200.0, 'perfil_vaga_competencia_tecnicas_e_comportamentais': 'Excel, Análise de Dados', 'informacoes_basicas_tipo_contratacao': 'PJ', 'informacoes_basicas_cliente': 'Empresa B'} | Resultado: {'previsao': 1, 'probabilidade': 0.76, 'mensagem': 'Entrevista provável de ser concluída'}\",\n",
+        "    \"2025-05-21 11:40:15 - IP: 127.0.0.1 | Entrada: {'formacao_e_idiomas_nivel_academico': 'Superior Completo', 'formacao_e_idiomas_nivel_ingles': 'Avançado', 'informacoes_profissionais_nivel_profissional': 'Sênior', 'informacoes_profissionais_remuneracao': 6000.0, 'perfil_vaga_competencia_tecnicas_e_comportamentais': 'Liderança, Python', 'informacoes_basicas_tipo_contratacao': 'CLT', 'informacoes_basicas_cliente': 'Empresa C'} | Resultado: {'previsao': 1, 'probabilidade': 0.91, 'mensagem': 'Entrevista provável de ser concluída'}\",\n",
+        "    \"2025-05-21 12:05:42 - IP: 127.0.0.1 | Entrada: {'formacao_e_idiomas_nivel_academico': 'Técnico', 'formacao_e_idiomas_nivel_ingles': 'Nenhum', 'informacoes_profissionais_nivel_profissional': 'Auxiliar', 'informacoes_profissionais_remuneracao': 1800.0, 'perfil_vaga_competencia_tecnicas_e_comportamentais': 'Manutenção', 'informacoes_basicas_tipo_contratacao': 'CLT', 'informacoes_basicas_cliente': 'Empresa D'} | Resultado: {'previsao': 0, 'probabilidade': 0.38, 'mensagem': 'Entrevista não deve ser concluída'}\",\n",
+        "    \"2025-05-21 13:20:00 - IP: 127.0.0.1 | Entrada: {'formacao_e_idiomas_nivel_academico': 'Pós-graduação', 'formacao_e_idiomas_nivel_ingles': 'Fluente', 'informacoes_profissionais_nivel_profissional': 'Especialista', 'informacoes_profissionais_remuneracao': 8500.0, 'perfil_vaga_competencia_tecnicas_e_comportamentais': 'Gestão, Estratégia', 'informacoes_basicas_tipo_contratacao': 'PJ', 'informacoes_basicas_cliente': 'Empresa E'} | Resultado: {'previsao': 1, 'probabilidade': 0.95, 'mensagem': 'Entrevista provável de ser concluída'}\",\n",
+        "]\n",
+        "\n",
+        "with open(\"logs_entrevistas.log\", \"w\", encoding=\"utf-8\") as f:\n",
+        "    f.write(\"\\n\".join(log_linhas))"
+      ],
+      "metadata": {
+        "id": "1Cv7jfA0Jfqk"
+      },
+      "execution_count": 78,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!streamlit run painel.py &"
+      ],
+      "metadata": {
+        "id": "dRbNJ9-7FyXi",
+        "outputId": "587b2b91-bb1f-4def-da99-38c50f13caca",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.\n",
+            "\u001b[0m\n",
+            "\u001b[0m\n",
+            "\u001b[34m\u001b[1m  You can now view your Streamlit app in your browser.\u001b[0m\n",
+            "\u001b[0m\n",
+            "\u001b[34m  Local URL: \u001b[0m\u001b[1mhttp://localhost:8501\u001b[0m\n",
+            "\u001b[34m  Network URL: \u001b[0m\u001b[1mhttp://172.28.0.12:8501\u001b[0m\n",
+            "\u001b[34m  External URL: \u001b[0m\u001b[1mhttp://35.196.131.123:8501\u001b[0m\n",
+            "\u001b[0m\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from pyngrok import ngrok\n",
+        "\n",
+        "# Abre o túnel com protocolo explícito (novo formato exigido)\n",
+        "public_url = ngrok.connect(\"http://localhost:8501\")\n",
+        "print(\"🔗 Painel disponível em:\", public_url)\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "o981L1d4pHFC",
+        "outputId": "ee15819b-369d-41bb-f01d-4996793b26ec"
+      },
+      "execution_count": 80,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "🔗 Painel disponível em: NgrokTunnel: \"https://f0da-35-196-131-123.ngrok-free.app\" -> \"http://localhost:8501\"\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "dockerfile = \"\"\"\n",
+        "FROM python:3.9-slim\n",
+        "\n",
+        "WORKDIR /app\n",
+        "\n",
+        "COPY . .\n",
+        "\n",
+        "RUN pip install --no-cache-dir -r requirements.txt\n",
+        "\n",
+        "CMD [\"uvicorn\", \"main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]\n",
+        "\"\"\"\n",
+        "\n",
+        "with open(\"Dockerfile\", \"w\") as f:\n",
+        "    f.write(dockerfile)\n",
+        "\n",
+        "# Ver conteúdo\n",
+        "!cat Dockerfile\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "b8yQv30oLIcU",
+        "outputId": "82ee7332-d50e-461d-e93a-b804e6a6f3b3"
+      },
+      "execution_count": 31,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "FROM python:3.9-slim\n",
+            "\n",
+            "WORKDIR /app\n",
+            "\n",
+            "COPY . .\n",
+            "\n",
+            "RUN pip install --no-cache-dir -r requirements.txt\n",
+            "\n",
+            "CMD [\"uvicorn\", \"main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install pytest"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ICcLcyVDQq1Z",
+        "outputId": "f29678da-dfc8-4c3d-95c2-cf60e71e3f30"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: pytest in /usr/local/lib/python3.11/dist-packages (8.3.5)\n",
+            "Requirement already satisfied: iniconfig in /usr/local/lib/python3.11/dist-packages (from pytest) (2.1.0)\n",
+            "Requirement already satisfied: packaging in /usr/local/lib/python3.11/dist-packages (from pytest) (24.2)\n",
+            "Requirement already satisfied: pluggy<2,>=1.5 in /usr/local/lib/python3.11/dist-packages (from pytest) (1.5.0)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Recriar o arquivo de testes unitários com tratamento robusto para valores não vistos\n",
+        "\n",
+        "test_model_code = \"\"\"\\\n",
+        "import joblib\n",
+        "import pandas as pd\n",
+        "\n",
+        "def test_model_carrega():\n",
+        "    model = joblib.load('modelo_entrevista.pkl')\n",
+        "    assert model is not None\n",
+        "\n",
+        "def test_previsao_simples():\n",
+        "    model = joblib.load('modelo_entrevista.pkl')\n",
+        "    features = joblib.load('features_utilizadas.pkl')\n",
+        "    le_dict = joblib.load('label_encoders.pkl')\n",
+        "\n",
+        "    dados = {\n",
+        "        'formacao_e_idiomas.nivel_academico': 'Ensino Médio',\n",
+        "        'formacao_e_idiomas.nivel_ingles': 'Intermediário',\n",
+        "        'informacoes_profissionais.nivel_profissional': 'Júnior',\n",
+        "        'informacoes_profissionais.remuneracao': 3500,\n",
+        "        'perfil_vaga.competencia_tecnicas_e_comportamentais': 'HTML, CSS',\n",
+        "        'informacoes_basicas.tipo_contratacao': 'CLT',\n",
+        "        'informacoes_basicas.cliente': 'Empresa XP'\n",
+        "    }\n",
+        "\n",
+        "    df = pd.DataFrame([dados])\n",
+        "    for col in df.columns:\n",
+        "        if col in le_dict:\n",
+        "            encoder = le_dict[col]\n",
+        "            try:\n",
+        "                df[col] = encoder.transform([df[col][0]])\n",
+        "            except ValueError:\n",
+        "                df[col] = encoder.transform([encoder.classes_[0]])\n",
+        "\n",
+        "    df = df[features]\n",
+        "    pred = model.predict(df)[0]\n",
+        "    assert pred in [0, 1]\n",
+        "\"\"\"\n",
+        "\n",
+        "with open(\"test_model.py\", \"w\") as f:\n",
+        "    f.write(test_model_code)\n",
+        "\n",
+        "\"/content/test_model.py criado com sucesso.\""
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 35
+        },
+        "id": "KkuzSa9fQuvL",
+        "outputId": "2f16aef2-d043-4ada-af90-afa4105019a0"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'/content/test_model.py criado com sucesso.'"
+            ],
+            "application/vnd.google.colaboratory.intrinsic+json": {
+              "type": "string"
+            }
+          },
+          "metadata": {},
+          "execution_count": 108
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pytest test_model.py"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "JEmMWvcYQ4R-",
+        "outputId": "8dcf8404-c31b-4330-cc3f-6d0806bcae20"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\u001b[1m============================= test session starts ==============================\u001b[0m\n",
+            "platform linux -- Python 3.11.12, pytest-8.3.5, pluggy-1.5.0\n",
+            "rootdir: /content\n",
+            "plugins: anyio-4.9.0, langsmith-0.3.39, typeguard-4.4.2\n",
+            "collected 2 items                                                              \u001b[0m\n",
+            "\n",
+            "test_model.py \u001b[32m.\u001b[0m\u001b[32m.\u001b[0m\u001b[32m                                                         [100%]\u001b[0m\n",
+            "\n",
+            "\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 1.52s\u001b[0m\u001b[32m ===============================\u001b[0m\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import logging\n",
+        "logging.basicConfig(level=logging.INFO)"
+      ],
+      "metadata": {
+        "id": "yHqJqhOhRpGY"
+      },
+      "execution_count": 1,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import sklearn\n",
+        "print(sklearn.__version__)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "pXXL7bDvUM-O",
+        "outputId": "af3e9239-daed-455a-a013-c4d92352e456"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "1.6.1\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "print(\"Existe o log?\", os.path.exists(\"logs_entrevistas.log\"))"
+      ],
+      "metadata": {
+        "id": "FlVaQik-OjWg",
+        "outputId": "5f54938e-9362-4b49-f9ef-5d3721b393b0",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": 68,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Existe o log? True\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
